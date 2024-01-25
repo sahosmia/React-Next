@@ -1,14 +1,17 @@
-
+import NavBar from "./components/NavBar";
+import HeroSection from "./components/HeroSection";
+import StudentSection from "./components/StudentSection";
+import FooterSection from "./components/FooterSection";
 
 function App() {
-  
-
   return (
     <>
-      <h1>First page from react</h1>
-        
+      <NavBar></NavBar>
+      <HeroSection />
+      <StudentSection></StudentSection>
+      <FooterSection />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
