@@ -3,15 +3,90 @@ import Hero from "./layout/Hero";
 import Footer from "./layout/Footer";
 import SearchBox from "./components/SearchBox";
 import TaskTable from "./components/TaskTable";
-import { tasks } from "./data/tasks";
+import { taskData } from "./data/tasks";
 import { useState } from "react";
+import AddTaskBox from "./components/AddTaskBox";
+import EditTaskBox from "./components/EditTaskBox";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [isAddCartOpen, setIsAddCartOpen] = useState();
+  const [tasks, setTasks] = useState(taskData);
+  const [showAddCart, setShowAddCart] = useState(false);
+  const [showEditCart, setShowEditCart] = useState(false);
+  const [editedTask, setEditedTask] = useState(null);
+  const handleAddCartClose = () => {
+    setShowAddCart(false);
+  };
+
+  const handleEditCartOpen = (task) => {
+    setShowEditCart(true);
+    setEditedTask(task);
+  };
+  const handleEditCartClose = () => {
+    setShowEditCart(false);
+  };
+
+  // Add
+  const handleAddSubmit = (formData) => {
+    formData.tags = formData.tags.split(",");
+
+    setTasks([...tasks, formData]);
+    setShowAddCart(false);
+    toast.success("Task added successfully");
+    console.log(formData);
+  };
+
+  // Edit
+  const handleEditSubmit = (formData) => {
+    formData.tags = formData.tags.split(", ");
+    const newTaskList = tasks.map((task) =>
+      task.id !== formData.id ? task : formData
+    );
+    setTasks(newTaskList);
+    setShowEditCart(false);
+    toast.success("Task updated successfully");
+    console.log(formData);
+  };
+
+  const handleFavourite = (id) => {
+    const newTaskList = tasks.map((task) =>
+      task.id !== id ? task : { ...task, isFavourite: !task.isFavourite }
+    );
+    setTasks(newTaskList);
+  };
+
+  // Delete
+  const handleDelete = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+    toast.success("Task deleted successfully");
+  };
+
+  // All Delete
+  const handleAllDelete = () => {
+    setTasks([]);
+    toast.success("All Task deleted successfully");
+  };
+
   return (
     <>
       <Navbar />
       <Hero />
+
+      {showAddCart && (
+        <AddTaskBox
+          onClose={handleAddCartClose}
+          onAddSubmit={handleAddSubmit}
+        />
+      )}
+
+      {showEditCart && (
+        <EditTaskBox
+          task={editedTask}
+          onClose={handleEditCartClose}
+          onEditSubmit={handleEditSubmit}
+        />
+      )}
 
       {/* <!-- Begin Table --> */}
       <section className="mb-20" id="tasks">
@@ -23,103 +98,34 @@ function App() {
               <div className="flex items-center space-x-5">
                 <SearchBox />
                 <button
-                  onClick={() => setIsAddCartOpen(!isAddCartOpen)}
+                  onClick={() => setShowAddCart(!showAddCart)}
                   className="rounded-md bg-blue-500 px-3.5 py-2.5 text-sm font-semibold"
                 >
                   Add Task
                 </button>
-                <button className="rounded-md bg-red-500 px-3.5 py-2.5 text-sm font-semibold">
+                <button
+                  className="rounded-md bg-red-500 px-3.5 py-2.5 text-sm font-semibold"
+                  onClick={handleAllDelete}
+                >
                   Delete All
                 </button>
               </div>
             </div>
 
             <div className="overflow-auto">
-              <TaskTable tasks={tasks} />
+              <TaskTable
+                tasks={tasks}
+                onEditShow={handleEditCartOpen}
+                onDelete={handleDelete}
+                onFavourite={handleFavourite}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/*  */}
-       <form
-      className="mx-auto my-10 w-full max-w-[740px] rounded-xl border border-[#FEFBFB]/[36%] bg-[#191D26] p-9 max-md:px-4 lg:my-20 lg:p-11"
-    >
-      <h2
-        className="mb-9 text-center text-2xl font-bold text-white lg:mb-11 lg:text-[28px]"
-      >
-        Add New Task
-      </h2>
-
-      {/* <!-- inputs --> */}
-      <div className="space-y-9 text-white lg:space-y-10">
-        {/* <!-- title --> */}
-        <div className="space-y-2 lg:space-y-3">
-          <label htmlFor="title">Title</label>
-          <input
-            className="block w-full rounded-md bg-[#2D323F] px-3 py-2.5"
-            type="text"
-            name="title"
-            id="title"
-            required
-          />
-        </div>
-        {/* <!-- description --> */}
-        <div className="space-y-2 lg:space-y-3">
-          <label htmlFor="description">Description</label>
-          <textarea
-            className="block min-h-[120px] w-full rounded-md bg-[#2D323F] px-3 py-2.5 lg:min-h-[180px]"
-            type="text"
-            name="description"
-            id="description"
-            required
-          ></textarea>
-        </div>
-        {/* <!-- input group --> */}
-        <div
-          className="grid-cols-2 gap-x-4 max-md:space-y-9 md:grid lg:gap-x-10 xl:gap-x-20"
-        >
-          {/* <!-- tags --> */}
-          <div className="space-y-2 lg:space-y-3">
-            <label htmlFor="tags">Tags</label>
-            <input
-              className="block w-full rounded-md bg-[#2D323F] px-3 py-2.5"
-              type="text"
-              name="tags"
-              id="tags"
-              required
-            />
-          </div>
-          {/* <!-- priority --> */}
-          <div className="space-y-2 lg:space-y-3">
-            <label htmlFor="priority">Priority</label>
-            <select
-              className="block w-full cursor-pointer rounded-md bg-[#2D323F] px-3 py-2.5"
-              name="priority"
-              id="priority"
-              required
-            >
-              <option value="">Select Priority</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      {/* <!-- inputs ends --> */}
-      <div className="mt-16 flex justify-center lg:mt-20">
-        <button
-          type="submit"
-          className="rounded bg-blue-600 px-4 py-2 text-white transition-all hover:opacity-80"
-        >
-          Create new Task
-        </button>
-      </div>
-    </form>
-    {/* <!-- Add Task Form Ends --> */}
-
       <Footer />
+      <ToastContainer />
     </>
   );
 }
