@@ -1,14 +1,14 @@
-
+import Game from "./components/Game";
 
 function App() {
-  
-
   return (
     <>
-      <h1>First page from react</h1>
-        
+      <div className="container">
+       
+        <Game />
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
