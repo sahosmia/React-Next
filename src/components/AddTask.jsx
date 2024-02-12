@@ -1,13 +1,24 @@
 import { useState } from "react";
+import {
+  useTaskContext,
+  useTaskDispatchContext,
+} from "../contexts/TaskContext";
+import { getNextId } from "../utils";
 
-export default function AddTask({ onAddTask }) {
+export default function AddTask() {
   const [taskTitle, setTaskTitle] = useState("");
   const [error, setError] = useState(null);
+  const tasks = useTaskContext();
+  const dispatch = useTaskDispatchContext();
 
   const handleClick = () => {
     if (taskTitle !== "") {
       setTaskTitle("");
-      onAddTask(taskTitle);
+      dispatch({
+        type: "add-task",
+        id: getNextId(tasks),
+        taskTitle,
+      });
     } else {
       setError("This filed is empty");
     }

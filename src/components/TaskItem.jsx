@@ -1,15 +1,21 @@
 import { useState } from "react";
+import { useTaskDispatchContext } from "../contexts/TaskContext";
 
-export default function TaskItem({ task, onChangeTask, onDeleteTask }) {
+// eslint-disable-next-line react/prop-types
+export default function TaskItem({ task }) {
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
   const [taskTitle, setTaskTitle] = useState(task.title);
+  const dispatch = useTaskDispatchContext();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = () => {
     if (taskTitle !== "") {
-      onChangeTask({
-        ...task,
-        title: taskTitle,
+      dispatch({
+        type: "change-task",
+        task: {
+          ...task,
+          title: taskTitle,
+        },
       });
       setIsEditing(false);
     } else {
@@ -53,15 +59,23 @@ export default function TaskItem({ task, onChangeTask, onDeleteTask }) {
         type="checkbox"
         checked={task.status}
         onChange={(e) =>
-          onChangeTask({
-            ...task,
-            status: e.target.checked,
+          dispatch({
+            type: "change-task",
+            task: {
+              ...task,
+              status: e.target.checked,
+            },
           })
         }
       />
       {taskContent}
       <button
-        onClick={() => onDeleteTask(task.id)}
+        onClick={() =>
+          dispatch({
+            type: "delete-task",
+            id: task.id,
+          })
+        }
         className="bg-red-600 text-white px-5 rounded py-2"
       >
         Delete
