@@ -1,4 +1,4 @@
-const taskReducer = (state, action) => {
+const tasksReducer = (state, action) => {
   switch (action.type) {
     // add edit
     case "submit-task": {
@@ -40,4 +40,4 @@ const taskReducer = (state, action) => {
   throw Error("Unknown action: " + action.type);
 };
 
-export { taskReducer };
+export { tasksReducer };

@@ -1,7 +1,16 @@
 import { useState } from "react";
+import { useTasksDispatch } from "../../contexts/tasksContext";
 
-export default function SearchBox({ onSearch }) {
+export default function SearchBox() {
   const [searchValue, setSearchValue] = useState("");
+  const dispatch = useTasksDispatch();
+  // Search
+  const handleSearchTask = (searchTitle) => {
+    dispatch({
+      type: "search-task",
+      searchTitle,
+    });
+  };
   return (
     <form>
       <div className="flex">
@@ -15,7 +24,7 @@ export default function SearchBox({ onSearch }) {
             value={searchValue}
             onChange={(e) => {
               setSearchValue(e.target.value);
-              onSearch(e.target.value);
+              handleSearchTask(e.target.value);
             }}
           />
           <button
@@ -23,7 +32,7 @@ export default function SearchBox({ onSearch }) {
             className="absolute right-2 top-0 h-full rounded-e-lg text-white md:right-4"
             onClick={(e) => {
               e.preventDefault();
-              onSearch(searchValue);
+              handleSearchTask(searchValue);
             }}
           >
             <svg

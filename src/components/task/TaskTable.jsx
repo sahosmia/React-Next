@@ -1,7 +1,10 @@
+import { useTasks } from "../../contexts/tasksContext";
 import NoTaskFound from "./NoTaskFound";
 import TaskItem from "./TaskItem";
 
-export default function TaskTable({ tasks, onFavourite, onDelete, onEdit }) {
+export default function TaskTable({ onEdit }) {
+  const state = useTasks();
+
   return (
     <>
       <table className="table-fixed overflow-auto xl:w-full">
@@ -26,14 +29,12 @@ export default function TaskTable({ tasks, onFavourite, onDelete, onEdit }) {
           </tr>
         </thead>
         <tbody>
-          {tasks.length !== 0 ? (
-            tasks.map((item) => (
+          {state.length !== 0 ? (
+            state.map((item) => (
               <TaskItem
                 key={item.id}
                 task={item}
                 onEdit={onEdit}
-                onDelete={onDelete}
-                onFavourite={onFavourite}
               />
             ))
           ) : (

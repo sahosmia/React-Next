@@ -1,14 +1,32 @@
+import { useTasksDispatch } from "../../contexts/tasksContext";
 import { getRandomColor } from "../../utils/getRandomColor";
 import ActiveFavouriteStar from "./ActiveFavouriteStar";
 import InActiveFavouriteStar from "./InActiveFavouriteStar";
 
-export default function TaskItem({ task, onEdit, onDelete, onFavourite }) {
+export default function TaskItem({ task, onEdit }) {
   const { id, title, isFavourite, description, tags, priority } = task;
+  const dispatch = useTasksDispatch();
+
+  // isFavorite
+  const handleIsFavTask = (id) => {
+    dispatch({
+      type: "fav-task",
+      id,
+    });
+  };
+
+  // Delete Task
+  const handleDeleteTask = (id) => {
+    dispatch({
+      type: "delete-task",
+      id,
+    });
+  };
 
   return (
     <tr className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2">
-      <td onClick={() => onFavourite(task.id)}>
-        {task.isFavourite ? <ActiveFavouriteStar /> : <InActiveFavouriteStar />}
+      <td onClick={() => handleIsFavTask(id)}>
+        {isFavourite ? <ActiveFavouriteStar /> : <InActiveFavouriteStar />}
       </td>
       <td>{title}</td>
       <td>
@@ -36,7 +54,7 @@ export default function TaskItem({ task, onEdit, onDelete, onFavourite }) {
               const confirmDelete = window.confirm(
                 `Are you sure you want to delete ${title}?`
               );
-              confirmDelete && onDelete(id);
+              confirmDelete && handleDeleteTask(id);
             }}
           >
             Delete
