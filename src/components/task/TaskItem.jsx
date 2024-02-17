@@ -1,18 +1,14 @@
-import { getRandomColor } from "../utils/getRandomColor";
+import { getRandomColor } from "../../utils/getRandomColor";
 import ActiveFavouriteStar from "./ActiveFavouriteStar";
 import InActiveFavouriteStar from "./InActiveFavouriteStar";
 
-export default function TaskItem({ task, onEditShow, onDelete, onFavourite }) {
+export default function TaskItem({ task, onEdit, onDelete, onFavourite }) {
   const { id, title, isFavourite, description, tags, priority } = task;
 
   return (
     <tr className="border-b border-[#2E3443] [&>td]:align-baseline [&>td]:px-4 [&>td]:py-2">
-      <td>
-        {isFavourite ? (
-          <ActiveFavouriteStar onFavourite={onFavourite} id={id} />
-        ) : (
-          <InActiveFavouriteStar onFavourite={onFavourite} id={id} />
-        )}
+      <td onClick={() => onFavourite(task.id)}>
+        {task.isFavourite ? <ActiveFavouriteStar /> : <InActiveFavouriteStar />}
       </td>
       <td>{title}</td>
       <td>
@@ -45,7 +41,7 @@ export default function TaskItem({ task, onEditShow, onDelete, onFavourite }) {
           >
             Delete
           </button>
-          <button className="text-blue-500" onClick={() => onEditShow(task)}>
+          <button className="text-blue-500" onClick={() => onEdit(task)}>
             Edit
           </button>
         </div>

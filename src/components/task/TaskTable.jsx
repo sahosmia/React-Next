@@ -1,7 +1,7 @@
-import AddTaskBox from "./AddTaskBox";
+import NoTaskFound from "./NoTaskFound";
 import TaskItem from "./TaskItem";
 
-export default function TaskTable({ tasks, onEditShow, onDelete, onFavourite }) {
+export default function TaskTable({ tasks, onFavourite, onDelete, onEdit }) {
   return (
     <>
       <table className="table-fixed overflow-auto xl:w-full">
@@ -31,17 +31,13 @@ export default function TaskTable({ tasks, onEditShow, onDelete, onFavourite }) 
               <TaskItem
                 key={item.id}
                 task={item}
-                onEditShow={onEditShow}
+                onEdit={onEdit}
                 onDelete={onDelete}
                 onFavourite={onFavourite}
               />
             ))
           ) : (
-            <tr>
-              <td colSpan={10} className="text-center text-red-600">
-                Task List is empty!
-              </td>
-            </tr>
+            <NoTaskFound />
           )}
         </tbody>
       </table>
