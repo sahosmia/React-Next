@@ -1,25 +1,21 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import SearchBox from "./SearchBox";
 import TaskModal from "./TaskModal";
 import TaskTable from "./TaskTable";
 import { taskData } from "../../data/tasks";
+import { taskReducer } from "../../reducers/taskReducer";
 
 const TaskBoard = () => {
-  const [tasks, setTasks] = useState(taskData);
   const [showModal, setShowModal] = useState(false);
   const [taskUpdate, setTaskUpdate] = useState(null);
+  const [state, dispatch] = useReducer(taskReducer, taskData);
 
   const handleSubmitTask = (newTask, isAdd) => {
-    console.log(isAdd);
-    if (isAdd) {
-      setTasks([...tasks, newTask]);
-    } else {
-      setTasks(
-        tasks.map((task) => {
-          return task.id === newTask.id ? newTask : task;
-        })
-      );
-    }
+    dispatch({
+      type: "submit-task",
+      isAdd,
+      newTask,
+    });
     handleCloseModal();
   };
   // Edit
@@ -30,39 +26,34 @@ const TaskBoard = () => {
 
   // Delete Task
   const handleDeleteTask = (id) => {
-    console.log(id);
-    setTasks(
-      tasks.filter((task) => {
-        return task.id !== id;
-      })
-    );
+    dispatch({
+      type: "delete-task",
+      id,
+    });
   };
 
   // All Delete Task
   const handleDeleteAllTask = () => {
-    tasks.length = 0;
-    setTasks([...tasks]);
+    dispatch({
+      type: "delete-all-task",
+    });
   };
 
-  // isFavorite Done
+  // isFavorite
   const handleIsFavTask = (id) => {
-    setTasks(
-      tasks.map((task) => {
-        return task.id == id
-          ? { ...task, isFavourite: !task.isFavourite }
-          : task;
-      })
-    );
+    dispatch({
+      type: "fav-task",
+      id,
+    });
   };
 
+  // Search
   const handleSearchTask = (searchTitle) => {
-    const filtered = tasks.filter((task) =>
-      task.title.toLowerCase().includes(searchTitle.toLowerCase())
-    );
-
-    setTasks([...filtered]);
+    dispatch({
+      type: "search-task",
+      searchTitle,
+    });
   };
-
 
   // Modal Close
   const handleCloseModal = () => {
@@ -102,7 +93,7 @@ const TaskBoard = () => {
 
           <div className="overflow-auto">
             <TaskTable
-              tasks={tasks}
+              tasks={state}
               onEdit={handleEditModalOpen}
               onFavourite={handleIsFavTask}
               onDelete={handleDeleteTask}
