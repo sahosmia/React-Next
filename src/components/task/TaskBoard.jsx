@@ -15,6 +15,8 @@ const TaskBoard = () => {
       isAdd,
       newTask,
     });
+
+
     handleCloseModal();
   };
   // Edit

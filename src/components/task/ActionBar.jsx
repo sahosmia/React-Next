@@ -8,6 +8,7 @@ const ActionBar = ({ showModal }) => {
     dispatch({
       type: "delete-all-task",
     });
+    toast.success("This oparation is successfully.");
   };
 
   return (

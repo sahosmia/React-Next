@@ -24,14 +24,32 @@ const TaskModal = ({ onModalClose, onSave, taskUpdate }) => {
 
     setFormData({ ...formData, [name]: value });
   };
+  const errorMassage = (inputName) => {
+    return toast.error("This " + inputName + " will be not empty.");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (
+      formData.title !== "" &&
+      formData.description !== "" &&
+      formData.tags.length !== 0 &&
+      formData.priority !== ""
+    ) {
+      onSave(formData, isAdd);
+      toast.success("This oparation is successfully.");
+    } else {
+      formData.title === "" && errorMassage("title");
+      formData.description === "" && errorMassage("description");
+      formData.tags.length === 0 && errorMassage("tags");
+      formData.priority === "" && errorMassage("priority");
+    }
+  };
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen z-50 bg-black/60 backdrop-blur-sm">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSave(formData, isAdd);
-        }}
+        onSubmit={handleSubmit}
         className="mx-auto my-10 w-full max-w-[740px] rounded-xl border border-[#FEFBFB]/[36%] bg-[#191D26] p-9 max-md:px-4 lg:my-20 lg:p-11"
       >
         <h2 className="mb-9 text-center text-2xl font-bold text-white lg:mb-11 lg:text-[28px]">
@@ -48,7 +66,6 @@ const TaskModal = ({ onModalClose, onSave, taskUpdate }) => {
               id="title"
               value={formData.title}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -61,7 +78,6 @@ const TaskModal = ({ onModalClose, onSave, taskUpdate }) => {
               id="description"
               value={formData.description}
               onChange={handleChange}
-              required
             ></textarea>
           </div>
 
@@ -73,7 +89,6 @@ const TaskModal = ({ onModalClose, onSave, taskUpdate }) => {
                 type="text"
                 name="tags"
                 id="tags"
-                required
                 value={formData.tags}
                 onChange={handleChange}
               />
@@ -85,7 +100,6 @@ const TaskModal = ({ onModalClose, onSave, taskUpdate }) => {
                 className="block w-full cursor-pointer rounded-md bg-[#2D323F] px-3 py-2.5"
                 name="priority"
                 id="priority"
-                required
                 value={formData.priority}
                 onChange={handleChange}
               >

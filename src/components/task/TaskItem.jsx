@@ -2,6 +2,7 @@ import { useTasksDispatch } from "../../contexts/tasksContext";
 import { getRandomColor } from "../../utils/getRandomColor";
 import ActiveFavouriteStar from "./ActiveFavouriteStar";
 import InActiveFavouriteStar from "./InActiveFavouriteStar";
+import { toast } from "react-toastify";
 
 export default function TaskItem({ task, onEdit }) {
   const { id, title, isFavourite, description, tags, priority } = task;
@@ -13,6 +14,7 @@ export default function TaskItem({ task, onEdit }) {
       type: "fav-task",
       id,
     });
+    toast.success("This oparation is successfully.");
   };
 
   // Delete Task
@@ -21,6 +23,7 @@ export default function TaskItem({ task, onEdit }) {
       type: "delete-task",
       id,
     });
+    toast.success("This oparation is successfully.");
   };
 
   return (
