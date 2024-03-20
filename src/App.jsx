@@ -2,37 +2,30 @@ import { api } from "./api/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
-import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Posts from "./components/Post/Posts";
-import Modal from "./components/common/Modal";
+import Modal from "./components/Post/Modal";
+import { fetchPosts } from "./utils/fatchData";
+import ErrorMessage from "./components/common/ErrorMessage";
 
 function App() {
-  const [posts, setPosts] = useState(null);
-  const [error, setError] = useState(null);
   const [modal, setModal] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [postUpdate, setPostUpdate] = useState(null);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(3);
 
-  // Fatch data first time
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/posts");
-        if (response && response.data) {
-          setPosts(response.data);
-          setError(null);
-        }
-        setLoading(false);
-      } catch (error) {
-        setPosts(null);
-        setError(error.message);
-        setLoading(false);
-      }
-    };
-    fetchPosts();
-  }, []);
+  // Data fetching by useQuery
+  const {
+    isPending,
+    isError,
+    error,
+    data: posts,
+  } = useQuery({
+    queryKey: ["posts", { page, perPage }],
+    queryFn: fetchPosts,
+    retry: false,
+  });
 
   // Modal Open Handle
   const modalOpen = () => {
@@ -43,54 +36,6 @@ function App() {
   const modalClose = () => {
     setModal(false);
     setPostUpdate(null);
-  };
-
-  // Delete
-  const handleDelete = async (id) => {
-    try {
-      const response = await api.delete(`/posts/${id}`);
-      console.log(response);
-      setPosts(
-        posts.filter((post) => {
-          return post.id !== id;
-        })
-      );
-      toast.success("Delete Successfully");
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  // Submit
-  const onSubmit = async (formData, isAdd) => {
-    try {
-      console.log(isAdd);
-      const id = Date.now() + Math.floor(Math.random() * 100);
-      formData.id = id.toString();
-      const response = await api.post("/posts", formData);
-      setPosts([...posts, formData]);
-      toast.success("Post Create Successfully.");
-      modalClose();
-    } catch (error) {
-      setError(error.message);
-      console.log(error);
-    }
-  };
-
-  // form Edit Submit
-  const editSubmit = async (formData) => {
-    try {
-      const response = await api.patch(`/posts/${formData.id}`, formData);
-      setPosts(
-        posts.map((post) => {
-          return post.id === formData.id ? formData : post;
-        })
-      );
-      toast.success("Post Update Successfully.");
-      modalClose();
-    } catch (error) {
-      setError(error.message);
-    }
   };
 
   // Edit Modal open
@@ -104,21 +49,17 @@ function App() {
     setSearch(e.target.value);
   };
 
+  if (isError) {
+    <h1>{error.message}</h1>;
+  }
   return (
     <>
       {/* Modal  */}
-      {modal && (
-        <Modal
-          modalClose={modalClose}
-          formSubmit={onSubmit}
-          editSubmit={editSubmit}
-          postUpdate={postUpdate}
-        />
-      )}
+      {modal && <Modal modalClose={modalClose} postUpdate={postUpdate} />}
 
       <div className="container mx-auto">
         <div className="flex justify-between items-center py-4">
-          <h1 className="font-semibold text-2xl">Photos List</h1>
+          <h1 className="font-semibold text-2xl">Posts List</h1>
           <div className="flex">
             <input
               type="text"
@@ -137,15 +78,29 @@ function App() {
         </div>
 
         {/* Post reandaring  */}
-        {loading ? (
-          <h1>loading....</h1>
+        {isPending ? (
+          <div>Loading...</div>
+        ) : isError ? (
+          <ErrorMessage message={error.message} />
         ) : (
-          <Posts
-            posts={posts}
-            error={error}
-            handleDelete={handleDelete}
-            handleEditModalOpen={handleEditModalOpen}
-          />
+          <Posts posts={posts.data} handleEditModalOpen={handleEditModalOpen} />
+        )}
+
+        {posts && (
+          <button
+            className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm"
+            onClick={() => setPage(posts.prev)}
+          >
+            Prev
+          </button>
+        )}
+        {posts && (
+          <button
+            className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm"
+            onClick={() => setPage(posts.next)}
+          >
+            Next
+          </button>
         )}
       </div>
       <ToastContainer />

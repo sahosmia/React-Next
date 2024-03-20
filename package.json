@@ -11,6 +11,8 @@
     "server": "json-server -p 8000 src/data/database.json"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.28.0",
+    "@tanstack/react-query-devtools": "^5.28.0",
     "axios": "^1.6.7",
     "json-server": "^1.0.0-alpha.23",
     "react": "^18.2.0",
@@ -20,6 +22,7 @@
     "react-toastify": "^10.0.4"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.27.7",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
