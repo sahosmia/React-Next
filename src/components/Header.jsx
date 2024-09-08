@@ -1,3 +1,4 @@
+import PropTypes from "prop-types"
 import SearchBox from "./SearchBox";
 
 export default function Header({
@@ -41,4 +42,11 @@ export default function Header({
       </div>
     </header>
   );
+}
+
+Header.propTypes = {
+  handleSearch: PropTypes.any,
+  handleSortBy: PropTypes.func,
+  searchQuery: PropTypes.any,
+  setSearchQuery: PropTypes.any
 }

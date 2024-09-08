@@ -6,10 +6,10 @@ import BookListSection from "./BookListSection";
 const MainSection = () => {
   const [books, setBooks] = useState(bookLists);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortCriteria, setSortCriteria] = useState("");
+  const [sortBy, setSortBy] = useState("");
 
-  const sortBy = (criteria) => {
-    let sortedBooks = [...books];
+  const handleSortBy = (criteria, booklist = books) => {
+    let sortedBooks = [...booklist];
 
     switch (criteria) {
       case "name_asc":
@@ -29,24 +29,28 @@ const MainSection = () => {
     }
 
     setBooks(sortedBooks);
-    setSortCriteria(criteria);
+    setSortBy(criteria);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const updatedBooks = books.filter((item) =>
+    const updatedBooks = bookLists.filter((item) =>
       item.bookName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setBooks(updatedBooks);
+    if (sortBy) {
+      handleSortBy(sortBy, updatedBooks);
+    } else {
+      setBooks(updatedBooks);
+    }
   };
 
   const handleFavourite = (id) => {
-    console.log(id);
     const newBookLists = [...books];
-    const updatedObject = newBookLists.find((item) => item.id === id);
-    updatedObject.favorite = !updatedObject.favorite;
+    const updatedBooks = newBookLists.map((item) =>
+      item.id === id ? { ...item, favorite: !item.favorite } : item
+    );
 
-    setBooks(newBookLists);
+    setBooks(updatedBooks);
   };
 
   return (
@@ -55,8 +59,8 @@ const MainSection = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearch={handleSearch}
-        handleSortBy={sortBy}
-      ></Header>
+        handleSortBy={handleSortBy}
+      />
       <BookListSection books={books} handleFavourite={handleFavourite} />
     </main>
   );
