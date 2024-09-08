@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import { useTasksDispatch } from "../../contexts/tasksContext";
 import { getRandomColor } from "../../utils/getRandomColor";
 import ActiveFavouriteStar from "./ActiveFavouriteStar";
@@ -18,12 +19,24 @@ export default function TaskItem({ task, onEdit }) {
   };
 
   // Delete Task
-  const handleDeleteTask = (id) => {
-    dispatch({
-      type: "delete-task",
-      id,
+  const handleDeleteTask = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Delete It!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch({
+          type: "delete-task",
+          id,
+        });
+        toast.success("This oparation is successfully.");
+      }
     });
-    toast.success("This oparation is successfully.");
   };
 
   return (
@@ -51,15 +64,7 @@ export default function TaskItem({ task, onEdit }) {
       <td className="text-center">{priority}</td>
       <td>
         <div className="flex items-center justify-center space-x-3">
-          <button
-            className="text-red-500"
-            onClick={() => {
-              const confirmDelete = window.confirm(
-                `Are you sure you want to delete ${title}?`
-              );
-              confirmDelete && handleDeleteTask(id);
-            }}
-          >
+          <button className="text-red-500" onClick={handleDeleteTask}>
             Delete
           </button>
           <button className="text-blue-500" onClick={() => onEdit(task)}>

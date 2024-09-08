@@ -4,6 +4,7 @@ import { useTasksDispatch } from "../../contexts/tasksContext";
 export default function SearchBox() {
   const [searchValue, setSearchValue] = useState("");
   const dispatch = useTasksDispatch();
+
   // Search
   const handleSearchTask = (searchTitle) => {
     dispatch({
@@ -11,6 +12,9 @@ export default function SearchBox() {
       searchTitle,
     });
   };
+
+
+  
   return (
     <form>
       <div className="flex">

@@ -1,3 +1,5 @@
+import { taskData } from "../data/tasks";
+
 const tasksReducer = (state, action) => {
   switch (action.type) {
     // add edit
@@ -31,6 +33,12 @@ const tasksReducer = (state, action) => {
 
     // search
     case "search-task": {
+      // Check if searchTitle is empty, return all tasks if true
+      if (action.searchTitle.trim() === "") {
+        return taskData;
+      }
+
+      // Otherwise, filter tasks based on searchTitle
       return state.filter((task) =>
         task.title.toLowerCase().includes(action.searchTitle.toLowerCase())
       );
